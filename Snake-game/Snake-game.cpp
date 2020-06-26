@@ -150,7 +150,7 @@ void Logic()
 int main()
 {
 	Setup();
-	while (!gameOver)
+	while (!gameOver) //main game loop
 	{
 		Draw();
 		Input();
