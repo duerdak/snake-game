@@ -28,7 +28,8 @@ void Setup()
 
 void Draw()
 {
-	system("cls");
+	Sleep(75); //controlling board update speed
+	system("cls"); //clears console screen
 	// top border of map
 	for (int i = 0; i < width + 2; i++)
 	{
@@ -43,15 +44,15 @@ void Draw()
 			if (j == 0)
 				cout << "#"; //draw left side of wall
 			if (i == y && j == x)
-				cout << "O";
+				cout << "O"; //prints head 
 			else if (i == fruitY && j == fruitX)
-				cout << "X";
+				cout << "X"; //prints fruit
 			else
 			{
-				bool print = false;
+				bool print = false; //keeps track of wether we printed the tail segment or not
 				for (int k = 0; k < nTail; k++)
 				{
-					if (tailX[k] == j && tailY[k] == i)
+					if (tailX[k] == j && tailY[k] == i) // j == current x coordinate; i == current y coordinate
 					{
 						cout << "o";
 						print = true;
@@ -100,18 +101,17 @@ void Input()
 
 void Logic()
 {
-	int prevX = tailX[0], prevY = tailY[0], prev2X, prev2Y;
-	tailX[0] = x; //body positionX before head
-	tailY[0] = y; //body positionY before head
-	for (int i = 1; i < nTail; i++) //starts at 1 because pos 0 is recorded at the upper two rows
+	for (int i = nTail; i > 0; i--)
 	{
-		prev2X = tailX[i]; //stores Oo[o] position
-		prev2Y = tailY[i]; //stores Oo[o] position
-		tailX[i] = prevX;
-		tailY[i] = prevY;
-		prevX = prev2X;
-		prevY = prev2Y;
+
+		tailX[i] = tailX[i - 1];
+
+		tailY[i] = tailY[i - 1];
+
 	}
+	tailX[0] = x;
+	tailY[0] = y;
+
 	switch (dir)
 	{
 	case LEFT:
@@ -133,14 +133,15 @@ void Logic()
 	if (x >= width) x = 0; else if (x < 0) x = width - 1; //if you want to pass through the walls of the map
 	if (y >= height) y = 0; else if (y < 0) y = height - 1; //if you want to pass through the bottom and top of the map
 
-	for (int i = 0; i < nTail; i++)
+	for (int i = 0; i < nTail; i++) //check if we hit ourselves
 		if (tailX[i] == x && tailY[i] == y)
 			gameOver = true;
 
 	if (x == fruitX && y == fruitY)
 	{
 		nTail++;
-		score += 10;
+		score += 10; //increase score 
+		//new fruit pos
 		fruitX = rand() % width;
 		fruitY = rand() % height;
 	}
@@ -149,13 +150,12 @@ void Logic()
 
 int main()
 {
-	Setup();
+	Setup(); //prepares some game logic before the games stars
 	while (!gameOver) //main game loop
 	{
-		Draw();
-		Input();
-		Logic();
-		Sleep(50); //controlling board update speed
+		Draw(); //draws game board
+		Input(); //gets player input
+		Logic(); //Deals with updating tail body, checking if we lost
 	}
 	cout << endl << "Thanks for playing!";
 	return 0;
